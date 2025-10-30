@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_rest_message_fn_parameters">
+    <sys_rest_message_fn_parameters action="INSERT_OR_UPDATE">
+        <name>token</name>
+        <rest_message_function display_value="ListEnvironments">9a9fab8b83a4a2103e53f065eeaad377</rest_message_function>
+        <sys_class_name>sys_rest_message_fn_parameters</sys_class_name>
+        <sys_created_by>yohanes.yilma</sys_created_by>
+        <sys_created_on>2025-04-01 18:31:10</sys_created_on>
+        <sys_id>7bdfa3cb83a4a2103e53f065eeaad398</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>token</sys_name>
+        <sys_package display_value="Brainboard" source="x_854636_b_board">7062797e832822103e53f065eeaad32b</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Brainboard">7062797e832822103e53f065eeaad32b</sys_scope>
+        <sys_update_name>sys_rest_message_fn_parameters_7bdfa3cb83a4a2103e53f065eeaad398</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-04-28 13:21:34</sys_updated_on>
+        <type>string</type>
+        <value>bb_JDJhJDEwJHVzSGJnb1lWYmZRbXdtZVRIZ29IZC4xc3BpMnozWFlIdVpYQjBGeTVpSFNxSERFYjlvTGdT</value>
+    </sys_rest_message_fn_parameters>
+</record_update>

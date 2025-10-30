@@ -2,7 +2,7 @@
     <sys_dictionary action="INSERT_OR_UPDATE" element="architecture_template" table="x_854636_b_board_clone_template_task">
         <active>true</active>
         <array>false</array>
-        <attributes>readonly_clickthrough=true</attributes>
+        <attributes>edge_encryption_enabled=true,encode_utf8=false,readonly_clickthrough=true</attributes>
         <audit>false</audit>
         <calculation><![CDATA[(function calculatedFieldValue(current) {
 
@@ -52,7 +52,6 @@
         <sys_class_name>sys_dictionary</sys_class_name>
         <sys_created_by>yohanes.yilma</sys_created_by>
         <sys_created_on>2025-09-03 21:22:50</sys_created_on>
-        <sys_id>1d9859c7473c72504515fe02d16d4387</sys_id>
         <sys_name>Architecture Template</sys_name>
         <sys_package display_value="Brainboard" source="x_854636_b_board">7062797e832822103e53f065eeaad32b</sys_package>
         <sys_policy/>

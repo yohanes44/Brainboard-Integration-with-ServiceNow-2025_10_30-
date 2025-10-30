@@ -12,7 +12,7 @@
         <name>x_854636_b_board_imp_environments.*</name>
         <operation display_value="query_range">e66cf897b7300210240b06dd1e11a9fd</operation>
         <script/>
-        <security_attribute display_value="UserIsAuthenticatedAndHasRightsToRead">30b1557ea3dc6210103da1fdc31e6128</security_attribute>
+        <security_attribute display_value="">30b1557ea3dc6210103da1fdc31e6128</security_attribute>
         <sys_class_name>sys_security_acl</sys_class_name>
         <sys_created_by>@@snc_write_audit@@</sys_created_by>
         <sys_created_on>2025-05-12 17:51:31</sys_created_on>

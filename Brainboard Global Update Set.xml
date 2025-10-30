@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?><unload unload_date="2025-10-30 11:27:48">
+<sys_remote_update_set action="INSERT_OR_UPDATE">
+<application display_value="Global">global</application>
+<application_name>Global</application_name>
+<application_scope>global</application_scope>
+<application_version/>
+<collisions/>
+<commit_date/>
+<deleted/>
+<description/>
+<inserted/>
+<name>Brainboard [Global] V2</name>
+<origin_sys_id/>
+<parent display_value=""/>
+<release_date/>
+<remote_base_update_set display_value=""/>
+<remote_parent_id/>
+<remote_sys_id>5d60478b83b03210454053d6feaad3ac</remote_sys_id>
+<state>loaded</state>
+<summary/>
+<sys_class_name>sys_remote_update_set</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2025-10-30 11:27:47</sys_created_on>
+<sys_id>f400ca57837c7210454053d6feaad340</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2025-10-30 11:27:47</sys_updated_on>
+<update_set display_value=""/>
+<update_source display_value=""/>
+<updated/>
+</sys_remote_update_set>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_script_include_f74019db83b47210454053d6feaad361</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_script_include"&gt;&lt;sys_script_include action="INSERT_OR_UPDATE"&gt;&lt;access&gt;public&lt;/access&gt;&lt;active&gt;true&lt;/active&gt;&lt;api_name&gt;global.BrainboardGlobalUtil&lt;/api_name&gt;&lt;caller_access/&gt;&lt;client_callable&gt;false&lt;/client_callable&gt;&lt;description/&gt;&lt;mobile_callable&gt;false&lt;/mobile_callable&gt;&lt;name&gt;BrainboardGlobalUtil&lt;/name&gt;&lt;sandbox_callable&gt;false&lt;/sandbox_callable&gt;&lt;script&gt;&lt;![CDATA[var BrainboardGlobalUtil = Class.create();
+
+BrainboardGlobalUtil.catItemCategory = "aab5abdb53b46210e80451a0a0490e09";
+BrainboardGlobalUtil.catItemCatalog = "cdb42f1b53b46210e80451a0a0490e0e";
+BrainboardGlobalUtil.token = gs.getProperty("x_854636_b_board.api.token");
+BrainboardGlobalUtil.portalTopic = "3833c87f473062506161e99b116d43d4";
+BrainboardGlobalUtil.clone_architecture_tpl_flow = "3bbb5fea837462103e53f065eeaad3bc";
+BrainboardGlobalUtil.variableSets = [
+	{
+		sys_id: "f4c1942bc3af22107e68b41ed40131cd",
+		order: 100,
+		description: "Widget Item"
+	},
+	{
+		sys_id: "52b414ebc3af22107e68b41ed40131f4",
+		order: 300,
+		description: "Variables"
+	},
+	{
+		sys_id: "17459cafc3af22107e68b41ed4013110",
+		order: 200,
+		description: "Project &amp; Environment"
+	}
+];
+
+
+BrainboardGlobalUtil.prototype = {
+    initialize: function() {
+    },
+
+	getArchitectureTemplateGR: function (archTplSysId) {
+		var gr = new GlideRecord("x_854636_b_board_architecture_template");
+		if (gr.get(archTplSysId)) {
+			return gr;
+		}
+	},
+
+	attachImage: function (tableName, recordSysId, fileName, imageURL) {
+		var request = new sn_ws.RESTMessageV2();
+		request.setHttpMethod("get");
+		request.setEndpoint(imageURL);
+		request.saveResponseBodyAsAttachment(tableName, recordSysId, fileName);
+		var response = request.execute();
+		var httpStatus = response.getStatusCode();
+		return response.getResponseAttachmentSysid();
+	},
+
+
+	createCatalogItem: function (archTplSysId, iconImageAttachment, pictureImageAttachment) {
+		var archTplGr = this.getArchitectureTemplateGR(archTplSysId);
+
+		var rp = new GlideRecord("sc_cat_item_producer");
+		rp.initialize();
+		rp.setValue("sys_scope", "7062797e832822103e53f065eeaad32b");
+		rp.name = archTplGr.getValue("name");
+		rp.short_description = archTplGr.getValue("name");
+		rp.description = archTplGr.getValue("description");
+		rp.table_name = "x_854636_b_board_clone_template_task";
+		rp.catalog = "e0d08b13c0a8016400a5f79be54a0ed2";
+		rp.category = BrainboardGlobalUtil.catItemCategory;
+		rp.script = 'current.project = producer.selectedProject;\n' +
+			'current.environment = producer.selectedEnvironment;';
+		rp.active = true;
+		rp.icon = iconImageAttachment;
+		rp.picture = pictureImageAttachment;
+		rp.no_attachment_v2 = true;
+		rp.no_save_as_draft = true;
+		var rpSysId = rp.insert();
+
+		var mtmCon = new GlideRecord("m2m_connected_content");
+		mtmCon.initialize();
+		mtmCon.setValue("topic", BrainboardGlobalUtil.portalTopic);
+		mtmCon.setValue("content_type", "98f9a16553622010069addeeff7b1248");
+		mtmCon.setValue("catalog_item", rpSysId);
+		mtmCon.insert();
+
+		archTplGr.setValue("catalog_item", rpSysId);
+		archTplGr.update();
+
+		// attach the variables sets to the cat item
+		BrainboardGlobalUtil.variableSets.forEach(function (variableSet) {
+			var variableSetGr = new GlideRecord("io_set_item");
+			variableSetGr.initialize();
+			variableSetGr.setValue("sys_scope", "7062797e832822103e53f065eeaad32b");
+			variableSetGr.variable_set = variableSet.sys_id;
+			variableSetGr.sc_cat_item = rpSysId;
+			variableSetGr.order = variableSet.order;
+			variableSetGr.insert();
+		});
+
+		var containerStartGr = new GlideRecord("item_option_new");
+		containerStartGr.initialize();
+		containerStartGr.setValue("sys_scope", "7062797e832822103e53f065eeaad32b");
+		containerStartGr.type = "19";
+		containerStartGr.question_text = "Variables";
+		containerStartGr.name = "variables";
+		containerStartGr.order = "390";
+		containerStartGr.display_title = true;
+		containerStartGr.cat_item = rpSysId;
+		containerStartGr.insert();
+
+		var formatterBreakGr = new GlideRecord("item_option_new");
+		formatterBreakGr.initialize();
+		formatterBreakGr.setValue("sys_scope", "7062797e832822103e53f065eeaad32b");
+		formatterBreakGr.type = "12";
+		formatterBreakGr.order = "380";
+		formatterBreakGr.cat_item = rpSysId;
+		formatterBreakGr.insert();
+
+	},
+
+	syncVariable: function (architecture) {
+		var apiKey = gs.getProperty('x_854636_b_board.' + architecture.apiType + '_api_token');
+		var r = new sn_ws.RESTMessageV2('x_854636_b_board.Brainboard - ' + architecture.apiType, 'ListVariables');
+		r.setStringParameterNoEscape('architectureUUID', architecture.uuid);
+		r.setStringParameterNoEscape('token', apiKey);
+		var response = r.execute();
+		var responseBody = "" + response.getBody();
+		var httpStatus = response.getStatusCode();
+		var resp = global.JSON.parse(responseBody);
+
+		for (var i = 0; i &lt; resp.length; i++) {
+			var variableExist = this.variableExist(resp[i], architecture.sys_id);
+			if (variableExist) {
+				this.updateVariable(resp[i], architecture.sys_id);
+			} else {
+				this.createVariable(resp[i], architecture.sys_id, architecture.apiType);
+			}
+		}
+	},
+
+	getAllArchitectureTemplates: function () {
+		var architectureTplGr = new GlideRecord("x_854636_b_board_architecture_template");
+		architectureTplGr.query();
+		var architectureTemplates = [];
+		while (architectureTplGr.next()) {
+			architectureTemplates.push({
+				uuid: architectureTplGr.getValue("uuid"),
+				sys_id: architectureTplGr.getValue("sys_id"),
+			});
+		}
+		return architectureTemplates;
+	},
+
+	variableExist: function (data, architectureTplSysId) {
+		var variableGr = new GlideRecord("x_854636_b_board_variable");
+		variableGr.addQuery("name", data.name);
+		variableGr.addQuery("architecture_template", architectureTplSysId);
+		variableGr.setLimit(1);
+		variableGr.query();
+		var answer = false;
+		while (variableGr.next()) {
+			answer = true;
+		}
+		return answer;
+	},
+
+
+	createVariable: function (data, archTplSysId, apiType) {
+		var brainboardVariableGr = new GlideRecord("x_854636_b_board_variable");
+		brainboardVariableGr.initialize();
+		brainboardVariableGr.setValue("sys_scope", "7062797e832822103e53f065eeaad32b");
+		brainboardVariableGr.setValue("mandatry", data.mandatry);
+		brainboardVariableGr.setValue("architecture_template", archTplSysId);
+		brainboardVariableGr.setValue("value", data.value);
+		brainboardVariableGr.setValue("type", data.type);
+		brainboardVariableGr.setValue("description", data.description);
+		brainboardVariableGr.setValue("default", data.default);
+		brainboardVariableGr.setValue("name", data.name);
+		brainboardVariableGr.setValue("id", data.uuid);
+		brainboardVariableGr.setValue("api_type", apiType);
+		var createdbrainboardVariableSysId = brainboardVariableGr.insert();
+
+		var catVariableGr = new GlideRecord("item_option_new");
+		catVariableGr.initialize();
+		catVariableGr.setValue("sys_scope", "7062797e832822103e53f065eeaad32b");
+		catVariableGr.type = "6";
+		catVariableGr.mandatory = brainboardVariableGr.getValue("mandatry");
+		catVariableGr.question_text = brainboardVariableGr.getValue("name");
+		catVariableGr.name = brainboardVariableGr.getValue("name");
+		catVariableGr.order = 400;
+		catVariableGr.cat_item = brainboardVariableGr.architecture_template.catalog_item;
+		var createdCatVariableSysId = catVariableGr.insert();
+
+		var brainboardvarGr = new GlideRecord("x_854636_b_board_variable");
+		if (brainboardvarGr.get(createdbrainboardVariableSysId)) {
+			brainboardvarGr.catalog_variable = createdCatVariableSysId;
+			brainboardvarGr.update();
+		}
+	},
+
+	updateVariable: function (data, archTplSysId) {
+		var variableGr = new GlideRecord("x_854636_b_board_variable");
+		if (variableGr.get("id", data.uuid)) {
+			variableGr.setValue("mandatry", data.mandatry);
+			variableGr.setValue("architecture_template", archTplSysId);
+			variableGr.setValue("value", data.value);
+			variableGr.setValue("type", data.type);
+			variableGr.setValue("description", data.description);
+			variableGr.setValue("default", data.default);
+			variableGr.setValue("name", data.name);
+			variableGr.setValue("id", data.uuid);
+			variableGr.update();
+		}
+	},
+
+    type: 'BrainboardGlobalUtil'
+};]]&gt;&lt;/script&gt;&lt;sys_class_name&gt;sys_script_include&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2025-10-30 08:02:22&lt;/sys_created_on&gt;&lt;sys_id&gt;f74019db83b47210454053d6feaad361&lt;/sys_id&gt;&lt;sys_mod_count&gt;6&lt;/sys_mod_count&gt;&lt;sys_name&gt;BrainboardGlobalUtil&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_script_include_f74019db83b47210454053d6feaad361&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2025-10-30 08:19:21&lt;/sys_updated_on&gt;&lt;/sys_script_include&gt;&lt;sys_es_latest_script action="INSERT_OR_UPDATE"&gt;&lt;id&gt;f74019db83b47210454053d6feaad361&lt;/id&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2025-10-30 08:02:21&lt;/sys_created_on&gt;&lt;sys_id&gt;2ff0511f83b47210454053d6feaad334&lt;/sys_id&gt;&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2025-10-30 08:02:21&lt;/sys_updated_on&gt;&lt;table&gt;sys_script_include&lt;/table&gt;&lt;use_es_latest&gt;true&lt;/use_es_latest&gt;&lt;/sys_es_latest_script&gt;&lt;/record_update&gt;</payload>
+<payload_hash>1634012812</payload_hash>
+<remote_update_set display_value="Brainboard [Global] V2">f400ca57837c7210454053d6feaad340</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2025-10-30 11:27:47</sys_created_on>
+<sys_id>7c00ca57837c7210454053d6feaad340</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19a343331e80000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2025-10-30 11:27:47</sys_updated_on>
+<table/>
+<target_name>BrainboardGlobalUtil</target_name>
+<type>Script Include</type>
+<update_domain>global</update_domain>
+<update_guid>a8e4dd1700f472106741233fe344874f</update_guid>
+<update_guid_history>a8e4dd1700f472106741233fe344874f:1634012812,b1b4d9170ef4721010cad614daf2b404:1264876484,3d931193f2f47210bfdee32b00b26915:713560758,9b7255df39b472107be9a9815c218701:1843480196,602291df48b4721059ace0ff36ff891e:636206063,5ad1595fe1b47210183c3236823bbf42:682605304,f3f09d1f71b47210e799180e95cf3358:734157047</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+</unload>
